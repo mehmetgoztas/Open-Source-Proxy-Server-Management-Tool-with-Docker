@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  proxy:
+    container_name: manusproxy
+    restart: always
+    build: .
+    ports:
+      - "80:80/tcp"
+    networks:
+      project:
+        ipv4_address: 52.52.52.3
+
+  dns:
+    restart: always
+    image: strm/dnsmasq
+    volumes:
+      - ./dnsmasq.conf:/etc/dnsmasq.conf
+    ports:
+      - "53:53/udp"
+    cap_add:
+      - NET_ADMIN
+    networks:
+      project:
+        ipv4_address: 52.52.52.2
+
+networks:
+  project:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 52.52.52.0/24
+          gateway: 52.52.52.1
